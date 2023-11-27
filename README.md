@@ -8,7 +8,7 @@ Paint with brush or add simple shapes and see the proposed image adapting live.
 CTRL + wheel to adapt cursor size. The SD model can be adapted in the lcm.py file.
 Voilà!
 
-
+NB: Working with Pyside 6.5.2
 
 ## Credits
 The 'lcm.py' is adapted from https://github.com/flowtyone
