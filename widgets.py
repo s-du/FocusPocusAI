@@ -161,15 +161,46 @@ class Canvas(QGraphicsView):
 
         self.current_tool = 'brush'
         self.current_color = QColor(Qt.black)
-        self.brush_size = 5
+        self.brush_size = 10
         self.drawing = False
         self.last_point = None
+
+        # custom paint cursor
+        self.brush_cur = self.create_circle_cursor(10)
 
         self.temp_item = None
 
         self.setBackgroundBrush(QBrush(QColor(255, 255, 255)))
 
         self.setRenderHint(QPainter.Antialiasing)
+
+    def change_to_brush_cursor(self):
+        self.setCursor(self.brush_cur)
+
+    def create_circle_cursor(self, diameter):
+        # Create a QPixmap with a transparent background
+        self.cursor_diameter = diameter
+
+        scale_factor = self.transform().m11()
+        # print(f'scale factor: {scale_factor}')
+        scaledDiameter = diameter * scale_factor
+
+        pixmap = QPixmap(scaledDiameter, scaledDiameter)
+        pixmap.fill(Qt.transparent)
+
+        # Create a QPainter to draw on the pixmap
+        painter = QPainter(pixmap)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        # Draw a circle
+        painter.setPen(QColor(0, 0, 0))  # Black color, you can change as needed
+        painter.drawEllipse(0, 0, scaledDiameter - 1, scaledDiameter - 1)
+
+        # End painting
+        painter.end()
+
+        # Create a cursor from the pixmap
+        return QCursor(pixmap)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -207,6 +238,8 @@ class Canvas(QGraphicsView):
         if event.button() == Qt.LeftButton and self.drawing:
             self.drawing = False
             self.temp_item = None  # Reset temporary item
+
+
 
     def update_temp_shape(self, end_point):
         rect = QRectF(self.start_point, end_point).normalized()
@@ -246,8 +279,15 @@ class Canvas(QGraphicsView):
         self.brush_size += delta / 120  # Adjust this factor if needed
         self.brush_size = max(1, min(self.brush_size, 50))  # Limit brush size
 
+        self.brush_cur = self.create_circle_cursor(self.brush_size)
+        self.change_to_brush_cursor()
+
     def set_tool(self, tool):
         self.current_tool = tool
+        if tool == 'brush' or 'eraser':
+            self.change_to_brush_cursor()
+        else:
+            self.setCursor(Qt.ArrowCursor)
 
     def set_color(self):
         color = QColorDialog.getColor()

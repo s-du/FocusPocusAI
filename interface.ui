@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1006</width>
-    <height>680</height>
+    <width>716</width>
+    <height>490</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,6 +34,12 @@
            </item>
            <item>
             <widget class="QSlider" name="step_slider">
+             <property name="maximumSize">
+              <size>
+               <width>200</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="minimum">
               <number>4</number>
              </property>
@@ -58,6 +64,12 @@
            </item>
            <item>
             <widget class="QSlider" name="cfg_slider">
+             <property name="maximumSize">
+              <size>
+               <width>200</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="minimum">
               <number>1</number>
              </property>
@@ -85,6 +97,12 @@
            </item>
            <item>
             <widget class="QSlider" name="strength_slider">
+             <property name="maximumSize">
+              <size>
+               <width>200</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="minimum">
               <number>1</number>
              </property>
@@ -139,7 +157,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1006</width>
+     <width>716</width>
      <height>26</height>
     </rect>
    </property>
