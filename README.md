@@ -23,12 +23,24 @@ Examples of captures that could be a great source of information for diffusion :
     </p>
 </div>
 
+## Installation
+- Install CUDA (if not done already)
+- Clone the repo and install a venv.
+- Install torch. Example for CUDA 11.8:
+```
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+ (see https://pytorch.org/get-started/locally/)
+- Install other dependencies (see requirements). Note: It works with Pyside 6.5.2. Newer versions can cause problem with the loading of ui elements.
+- Launch main.py
+
+
 ## Usage
 Screen capture a 512 x 512 window on top any app (the dimensions can be adapted depending on your GPU). By default, the capture timestep is 1 second. Then, paint with a brush or add simple shapes and see the proposed image adapting live.
 CTRL + wheel to adapt cursor size. The SD model can be adapted in the lcm.py file.
 Voilà!
 
-NB: Working with Pyside 6.5.2. Newer version can cause problem with the loading of ui elements.
+
 
 ## Credits
 The 'lcm.py' is adapted from https://github.com/flowtyone
