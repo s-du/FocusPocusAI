@@ -1,4 +1,4 @@
-# PaintLCM
+# Screen to Art !
 Image generation based on screen capture and/or simple brush strokes. The Gradio code from <a>https://github.com/flowtyone/flowty-realtime-lcm-canvas</a> was adapted to Pyside6, and upgraded with screen capture functionality.
 
 <img src="paintlcm_lr3.gif" width="500" alt="Description">
