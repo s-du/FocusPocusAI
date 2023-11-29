@@ -9,19 +9,12 @@ Examples of captures that could be a great source of information for diffusion :
 - ...
 
 <div style="text-align: center;">
-    <img src="paintlcm_lr3.gif" width="500" alt="Description" style="display: block; margin: 0 auto;">
+    <img src="anims/paintlcm_lr2.gif" width="800" alt="Description" style="display: block; margin: 0 auto;">
     <p>
-    <i style="display: block; margin-top: 5px;">example showing a screen capture from CloudCompare + manual painting (on the left)</i>
+    <i style="display: block; margin-top: 5px;">example showing a screen capture from Blender (on the left)</i>
     </p>
 </div>
 
-
-<div style="text-align: center;">
-    <img src="paintlcm_lr4.gif" width="500" alt="Description" style="display: block; margin: 0 auto;">
-    <p>
-    <i style="display: block; margin-top: 5px;">example showing a screen capture from a video (on the left)</i>
-    </p>
-</div>
 
 ## Installation
 - Install CUDA (if not done already)
