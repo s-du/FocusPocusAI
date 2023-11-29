@@ -8,8 +8,20 @@ Examples of captures that could be a great source of information for diffusion :
 - Stop a video on a specific frame
 - ...
 
-<img src="paintlcm_lr3.gif" width="500" alt="Description">
-<i>example showing a screen capture from CloudCompare (on the left)</i>
+<div style="text-align: center;">
+    <img src="paintlcm_lr3.gif" width="500" alt="Description" style="display: block; margin: 0 auto;">
+    <p>
+    <i style="display: block; margin-top: 5px;">example showing a screen capture from CloudCompare (on the left)</i>
+    </p>
+</div>
+
+
+<div style="text-align: center;">
+    <img src="paintlcm_lr4.gif" width="500" alt="Description" style="display: block; margin: 0 auto;">
+    <p>
+    <i style="display: block; margin-top: 5px;">example showing a screen capture from a video (on the left)</i>
+    </p>
+</div>
 
 ## Usage
 Screen capture a 512 x 512 window on top any app (the dimensions can be adapted depending on your GPU). By default, the capture timestep is 1 second. Then, paint with a brush or add simple shapes and see the proposed image adapting live.
