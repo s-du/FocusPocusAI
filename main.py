@@ -146,13 +146,17 @@ class PaintLCM(QMainWindow):
 
         screen = QApplication.primaryScreen()
         if screen is not None:
-            pixmap = screen.grabWindow(0, x, y, width, height)
+            pixmap = screen.grabWindow(0, x+6, y+6, width-12, height-12)
             self.canvas.setPhoto(pixmap)
 
         # should it update continuously
         if self.checkBox.isChecked():
             self.update_image()
 
+    def closeEvent(self, event):
+        # Explicitly close the transparent box when the main window is closed
+        self.box.close()
+        event.accept()
     def update_image(self):
         # gather slider parameters:
         steps = self.step_slider.value()

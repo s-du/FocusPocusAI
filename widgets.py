@@ -121,13 +121,13 @@ class TransparentBox(QWidget):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.dragging = False
-        self.setGeometry(100, 100, size, size)  # Initial position and size
+        self.setGeometry(100, 100, size+12, size+12)  # Initial position and size
 
     def paintEvent(self, event):
         painter = QPainter(self)
         pen = QPen(QColor(0, 120, 215), 6)  # Increased pen width to 6px
         painter.setPen(pen)
-        painter.drawRect(0, 0, self.width() - 1, self.height() - 1)  # Draw box edges
+        painter.drawRect(0, 0, self.width(), self.height())  # Draw box edges
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
