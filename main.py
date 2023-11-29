@@ -1,5 +1,6 @@
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+from PySide6.QtCore import *
 
 import widgets as wid
 import resources as res
@@ -9,7 +10,7 @@ from PIL import Image
 import os
 
 # Params
-IMG_SIZE = 300
+IMG_SIZE = 512
 
 
 def scene_to_image(viewer):
@@ -68,6 +69,8 @@ class PaintLCM(QMainWindow):
         self.ellipse_action.triggered.connect(lambda: self.canvas.set_tool('ellipse'))
         self.rectangle_action.triggered.connect(lambda: self.canvas.set_tool('rectangle'))
         self.color_action.triggered.connect(self.canvas.set_color)
+        self.capture_action.triggered.connect(self.toggle_capture)
+        self.pushButton.clicked.connect(self.update_image)
 
         # when editing canvas --> update inference
         self.canvas.endDrawing.connect(self.update_image)
@@ -82,6 +85,12 @@ class PaintLCM(QMainWindow):
 
         # drawing ends
 
+        # add capture box
+        self.box = wid.TransparentBox(IMG_SIZE)
+        self.capture_interval = 1000  # milliseconds
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.captureScreen)
+
         if is_dark_theme:
             suf = '_white_tint'
             suf2 = '_white'
@@ -93,6 +102,7 @@ class PaintLCM(QMainWindow):
         self.add_icon(res.find(f'img/circle{suf}.png'), self.ellipse_action)
         self.add_icon(res.find(f'img/rectangle{suf}.png'), self.rectangle_action)
         self.add_icon(res.find(f'img/legend{suf}.png'), self.color_action)
+        self.add_icon(res.find(f'img/crop{suf}.png'), self.capture_action)
 
     # general functions __________________________________________
     def add_icon(self, img_source, pushButton_object):
@@ -100,6 +110,48 @@ class PaintLCM(QMainWindow):
         Function to add an icon to a pushButton
         """
         pushButton_object.setIcon(QIcon(img_source))
+
+
+    def toggle_capture(self):
+        if self.capture_action.isChecked():
+            # disable tools
+            self.brush_action.setEnabled(False)
+            self.eraser_action.setEnabled(False)
+            self.ellipse_action.setEnabled(False)
+            self.rectangle_action.setEnabled(False)
+            self.color_action.setEnabled(False)
+
+            # remove existing items
+            self.canvas.clear_drawing()
+
+            # launch capture
+            self.box.show()
+            self.timer.start(self.capture_interval)
+
+        else:
+            self.brush_action.setEnabled(True)
+            self.eraser_action.setEnabled(True)
+            self.ellipse_action.setEnabled(True)
+            self.rectangle_action.setEnabled(True)
+            self.color_action.setEnabled(True)
+
+            self.timer.stop()
+            # stop capture
+            self.box.hide()
+
+    def captureScreen(self):
+        # Get geometry of the transparent box
+        x, y, width, height = self.box.geometry().getRect()
+        print(width,height)
+
+        screen = QApplication.primaryScreen()
+        if screen is not None:
+            pixmap = screen.grabWindow(0, x, y, width, height)
+            self.canvas.setPhoto(pixmap)
+
+        # should it update continuously
+        if self.checkBox.isChecked():
+            self.update_image()
 
     def update_image(self):
         # gather slider parameters:

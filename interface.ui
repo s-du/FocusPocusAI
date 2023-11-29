@@ -145,6 +145,20 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4"/>
          </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox">
+           <property name="text">
+            <string>Live update</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>Update inference</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -190,6 +204,7 @@
    <addaction name="separator"/>
    <addaction name="color_action"/>
    <addaction name="separator"/>
+   <addaction name="capture_action"/>
   </widget>
   <action name="brush_action">
    <property name="checkable">
@@ -235,6 +250,14 @@
   <action name="color_action">
    <property name="text">
     <string>color</string>
+   </property>
+  </action>
+  <action name="capture_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Capture screen</string>
    </property>
   </action>
  </widget>

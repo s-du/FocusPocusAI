@@ -114,6 +114,39 @@ def loadUi(uifile, baseinstance=None, customWidgets=None,
     QMetaObject.connectSlotsByName(widget)
     return widget
 
+
+class TransparentBox(QWidget):
+    def __init__(self, size):
+        super().__init__()
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.dragging = False
+        self.setGeometry(100, 100, size, size)  # Initial position and size
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        pen = QPen(QColor(0, 120, 215), 6)  # Increased pen width to 6px
+        painter.setPen(pen)
+        painter.drawRect(0, 0, self.width() - 1, self.height() - 1)  # Draw box edges
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.dragging = True
+            self.drag_position = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+
+    def mouseMoveEvent(self, event):
+        if self.dragging and event.buttons() == Qt.LeftButton:
+            self.move(event.globalPosition().toPoint() - self.drag_position)
+
+    def mouseReleaseEvent(self, event):
+        self.dragging = False
+
+    def enterEvent(self, event):
+        self.setCursor(Qt.SizeAllCursor)
+
+    def leaveEvent(self, event):
+        self.unsetCursor()
+
 class simpleCanvas(QGraphicsView):
     def __init__(self, img_size):
         super().__init__()
@@ -159,6 +192,9 @@ class Canvas(QGraphicsView):
         self.setMinimumSize(img_size, img_size)
         self.setMaximumSize(img_size, img_size)
 
+        self._photo = QGraphicsPixmapItem()
+        self.scene.addItem(self._photo)
+
         self.current_tool = 'brush'
         self.current_color = QColor(Qt.black)
         self.brush_size = 10
@@ -173,6 +209,10 @@ class Canvas(QGraphicsView):
         self.setBackgroundBrush(QBrush(QColor(255, 255, 255)))
 
         self.setRenderHint(QPainter.Antialiasing)
+
+    def setPhoto(self, pixmap=None):
+        if pixmap and not pixmap.isNull():
+            self._photo.setPixmap(pixmap)
 
     def change_to_brush_cursor(self):
         self.setCursor(self.brush_cur)
@@ -273,6 +313,13 @@ class Canvas(QGraphicsView):
         rectangle = QGraphicsRectItem(rect)
         rectangle.setBrush(QBrush(self.current_color))
         self.scene.addItem(rectangle)
+
+    def clear_drawing(self):
+        for item in self.scene.items():
+            if isinstance(item, QGraphicsPathItem) or \
+                    isinstance(item, QGraphicsEllipseItem) or \
+                    isinstance(item, QGraphicsRectItem):
+                self.scene.removeItem(item)
 
     def wheelEvent(self, event):
         delta = event.angleDelta().y()
