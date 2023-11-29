@@ -15,6 +15,13 @@ Examples of captures that could be a great source of information for diffusion :
     </p>
 </div>
 
+<div style="text-align: center;">
+    <img src="anims/paintlcm_lr8.gif" width="800" alt="Description" style="display: block; margin: 0 auto;">
+    <p>
+    <i style="display: block; margin-top: 5px;">example showing a screen capture from a video (on the left)</i>
+    </p>
+</div>
+
 
 ## Installation
 - Install CUDA (if not done already)
