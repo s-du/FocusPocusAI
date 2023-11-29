@@ -72,6 +72,8 @@ class PaintLCM(QMainWindow):
         self.capture_action.triggered.connect(self.toggle_capture)
         self.pushButton.clicked.connect(self.update_image)
 
+        self.checkBox_hide.stateChanged.connect(self.toggle_canvas)
+
         # when editing canvas --> update inference
         self.canvas.endDrawing.connect(self.update_image)
 
@@ -111,6 +113,15 @@ class PaintLCM(QMainWindow):
         """
         pushButton_object.setIcon(QIcon(img_source))
 
+    def toggle_canvas(self):
+        # Hide or show canvas based on checkbox state
+        if self.checkBox_hide.isChecked():
+            self.canvas.hide()
+        else:
+            self.canvas.show()
+
+        # Adjust the size of the window
+        self.adjustSize()
 
     def toggle_capture(self):
         if self.capture_action.isChecked():

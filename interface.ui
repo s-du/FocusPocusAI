@@ -146,6 +146,13 @@
           <layout class="QHBoxLayout" name="horizontalLayout_4"/>
          </item>
          <item>
+          <widget class="QCheckBox" name="checkBox_hide">
+           <property name="text">
+            <string>Hide input</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QCheckBox" name="checkBox">
            <property name="text">
             <string>Live update</string>
