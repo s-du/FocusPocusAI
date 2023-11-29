@@ -31,7 +31,11 @@ Examples of captures that could be a great source of information for diffusion :
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
  (see https://pytorch.org/get-started/locally/)
-- Install other dependencies (see requirements). Note: It works with Pyside 6.5.2. Newer versions can cause problem with the loading of ui elements.
+- Install other dependencies (see requirements):
+    - accelerate
+    - diffusers
+    - transformers
+    - Pyside6. Note: It works with Pyside 6.5.2. Newer versions can cause problem with the loading of ui elements.
 - Launch main.py
 
 
