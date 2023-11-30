@@ -1,4 +1,4 @@
-# PixelMuse
+# FocusPocusAI
 Image generation from screen capture and/or simple brush strokes. It uses Stable Diffusion and LCM-Lora as AI backbone for the generative process.
 The Gradio code from <a>https://github.com/flowtyone/flowty-realtime-lcm-canvas</a> was adapted to Pyside6, and upgraded with the screen capture functionality.
 
