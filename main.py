@@ -168,6 +168,9 @@ class PaintLCM(QMainWindow):
         self.add_icon(res.find(f'img/save_as{suf}.png'), self.export_action)
         self.add_icon(res.find(f'img/movie{suf}.png'), self.sequence_action)
 
+        # run first inference
+        self.update_image()
+
     # general functions __________________________________________
     def add_icon(self, img_source, pushButton_object):
         """
@@ -176,10 +179,23 @@ class PaintLCM(QMainWindow):
         pushButton_object.setIcon(QIcon(img_source))
 
     def save_output(self):
-        pass
+        # add code for file dialog
+        file_path, _ = QFileDialog.getSaveFileName(
+            None, "Save Image", "", "PNG Image (*.png);;JPEG Image (*.jpg *.jpeg *.JPEG)"
+        )
+
+        # Save the image if a file path was provided, using high-quality settings for JPEG
+        if file_path:
+            if file_path.lower().endswith('.jpg') or file_path.lower().endswith('.jpeg'):
+                self.out.save(file_path, 'JPEG', 100)
+            else:
+                self.out.save(file_path)  # PNG is lossless by default
+
+        print(f'result saved: {file_path}')
 
     def record_sequence(self):
         pass
+
     def update_img_dim(self):
         # open dialog for image size
         dialog = InputDialog()
@@ -272,7 +288,7 @@ class PaintLCM(QMainWindow):
         # capture painted image
 
         print('running inference')
-        out = self.infer(
+        self.out = self.infer(
             prompt=p,
             image=self.im,
             num_inference_steps=steps,
@@ -280,9 +296,9 @@ class PaintLCM(QMainWindow):
             strength=image_strength,
             seed=1337
         )
-        print(out)
+        print(self.out)
 
-        out.save('result.jpg')
+        self.out.save('result.jpg')
         print('result saved')
 
         self.result_canvas.setPhoto(pixmap=QPixmap('result.jpg'))
