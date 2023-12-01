@@ -4,6 +4,7 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from PySide6.QtUiTools import QUiLoader
 
+
 class UiLoader(QUiLoader):
     """
     Subclass :class:`~PySide.QtUiTools.QUiLoader` to create the user interface
@@ -118,10 +119,11 @@ def loadUi(uifile, baseinstance=None, customWidgets=None,
 class TransparentBox(QWidget):
     def __init__(self, size):
         super().__init__()
+        self.w, self.h = size
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.dragging = False
-        self.setGeometry(100, 100, size+12, size+12)  # Initial position and size
+        self.setGeometry(100, 100, self.w + 12, self.h + 12)  # Initial position and size
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -147,35 +149,58 @@ class TransparentBox(QWidget):
     def leaveEvent(self, event):
         self.unsetCursor()
 
+
 class simpleCanvas(QGraphicsView):
     def __init__(self, img_size):
         super().__init__()
 
-        self.img_size = img_size
+        self.w, self.h = img_size
 
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
-        self.setSceneRect(0, 0, img_size, img_size)
-        self.setMinimumSize(img_size, img_size)
-        self.setMaximumSize(img_size, img_size)
+        self.setSceneRect(0, 0, self.w, self.h)
+        self.setMinimumSize(self.w, self.h)
+        self.setMaximumSize(self.w, self.h)
 
         self._photo = QGraphicsPixmapItem()
         self.scene.addItem(self._photo)
 
-        self.setBackgroundBrush(QBrush(QColor(255, 255, 255)))
+        self.setBackgroundBrush(QBrush(QColor(180, 180, 180)))
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setViewportMargins(0, 0, 0, 0)
 
         self.setRenderHint(QPainter.Antialiasing)
 
+    def create_new_scene(self, w, h):
+        self.w = w
+        self.h = h
+        self.scene.clear()
+        self.scene = QGraphicsScene()
+        self.setScene(self.scene)
+        self.setSceneRect(0, 0, w, h)
+        self.setMinimumSize(w, h)
+        self.setMaximumSize(w, h)
+        self.resetTransform()
+        self.add_empty_photo()
+        self.update()
+
+    def add_empty_photo(self):
+        self._photo = QGraphicsPixmapItem()
+        self.scene.addItem(self._photo)
+
     def setPhoto(self, pixmap=None):
         if pixmap and not pixmap.isNull():
-            self._photo.setPixmap(pixmap)
+            # Get the size of the sceneRect
+            targetSize = QSize(self.w, self.h)
 
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.fitInView(QRectF(0, 0, self.img_size, self.img_size), Qt.KeepAspectRatio)
+            # Scale the pixmap to the new size
+            scaledPixmap = pixmap.scaled(targetSize,
+                                         Qt.IgnoreAspectRatio)  # Use Qt.IgnoreAspectRatio to change the aspect ratio
+
+            self._photo.setPixmap(scaledPixmap)
 
 
 class Canvas(QGraphicsView):
@@ -184,13 +209,16 @@ class Canvas(QGraphicsView):
     def __init__(self, img_size):
         super().__init__()
 
-        self.img_size = img_size
+        self.w, self.h = img_size
+
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
-        self.setSceneRect(0, 0, img_size, img_size)
-        self.setMinimumSize(img_size, img_size)
-        self.setMaximumSize(img_size, img_size)
+        self.setSceneRect(0, 0, self.w, self.h)
+        self.setMinimumSize(self.w, self.h)
+        self.setMaximumSize(self.w, self.h)
 
         self._photo = QGraphicsPixmapItem()
         self.scene.addItem(self._photo)
@@ -206,9 +234,26 @@ class Canvas(QGraphicsView):
 
         self.temp_item = None
 
-        self.setBackgroundBrush(QBrush(QColor(255, 255, 255)))
+        self.setBackgroundBrush(QBrush(QColor(180, 180, 180)))
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setViewportMargins(0, 0, 0, 0)
 
         self.setRenderHint(QPainter.Antialiasing)
+
+    def create_new_scene(self, w, h):
+        self.scene.clear()
+        self.scene = QGraphicsScene()
+        self.setScene(self.scene)
+        self.setSceneRect(0, 0, w, h)
+        self.setMinimumSize(w, h)
+        self.setMaximumSize(w, h)
+        self.resetTransform()
+        self.add_empty_photo()
+        self.update()
+
+    def add_empty_photo(self):
+        self._photo = QGraphicsPixmapItem()
+        self.scene.addItem(self._photo)
 
     def setPhoto(self, pixmap=None):
         if pixmap and not pixmap.isNull():
@@ -242,10 +287,6 @@ class Canvas(QGraphicsView):
         # Create a cursor from the pixmap
         return QCursor(pixmap)
 
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.fitInView(QRectF(0, 0, self.img_size, self.img_size), Qt.KeepAspectRatio)
-
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.drawing = True
@@ -278,8 +319,6 @@ class Canvas(QGraphicsView):
         if event.button() == Qt.LeftButton and self.drawing:
             self.drawing = False
             self.temp_item = None  # Reset temporary item
-
-
 
     def update_temp_shape(self, end_point):
         rect = QRectF(self.start_point, end_point).normalized()
@@ -340,40 +379,3 @@ class Canvas(QGraphicsView):
         color = QColorDialog.getColor()
         if color.isValid():
             self.current_color = color
-
-
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-
-        self.canvas = Canvas()
-        self.setCentralWidget(self.canvas)
-
-        self.init_ui()
-
-    def init_ui(self):
-        self.create_toolbar()
-
-    def create_toolbar(self):
-        toolbar = self.addToolBar("Tools")
-
-        brush_action = QAction('Brush', self)
-        brush_action.triggered.connect(lambda: self.canvas.set_tool('brush'))
-        toolbar.addAction(brush_action)
-
-        eraser_action = QAction('Eraser', self)
-        eraser_action.triggered.connect(lambda: self.canvas.set_tool('eraser'))
-        toolbar.addAction(eraser_action)
-
-        ellipse_action = QAction('Ellipse', self)
-        ellipse_action.triggered.connect(lambda: self.canvas.set_tool('ellipse'))
-        toolbar.addAction(ellipse_action)
-
-        rectangle_action = QAction('Rectangle', self)
-        rectangle_action.triggered.connect(lambda: self.canvas.set_tool('rectangle'))
-        toolbar.addAction(rectangle_action)
-
-        color_action = QAction('Color', self)
-        color_action.triggered.connect(self.canvas.set_color)
-        toolbar.addAction(color_action)
-
