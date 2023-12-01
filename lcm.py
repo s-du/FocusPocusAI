@@ -5,6 +5,7 @@ from contextlib import nullcontext
 import time
 from sys import platform
 import torch
+import cv2
 
 """
 All credits to https://github.com/flowtyone/flowty-realtime-lcm-canvas!!
@@ -16,6 +17,24 @@ os.environ["TRANSFORMERS_CACHE"] = cache_path
 os.environ["HF_HUB_CACHE"] = cache_path
 os.environ["HF_HOME"] = cache_path
 is_mac = platform == "darwin"
+
+def create_video(image_folder, video_name, fps):
+    images = [img for img in os.listdir(image_folder) if img.endswith(".jpg") or img.endswith(".png")]
+    images.sort()  # Sort the images if needed
+
+    # Determine the width and height from the first image
+    frame = cv2.imread(os.path.join(image_folder, images[0]))
+    height, width, layers = frame.shape
+
+    # Initialize video writer
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # For mp4 videos
+    video = cv2.VideoWriter(video_name, fourcc, fps, (width, height))
+
+    for image in images:
+        video.write(cv2.imread(os.path.join(image_folder, image)))
+
+    cv2.destroyAllWindows()
+    video.release()
 
 def should_use_fp16():
     if is_mac:

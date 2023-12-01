@@ -13,6 +13,14 @@ import os
 IMG_W = 512
 IMG_H = 512
 
+def new_dir(dir_path):
+    """
+    Simple function to verify if a directory exists and if not creating it
+    :param dir_path: (str) the path to check
+    :return:
+    """
+    if not os.path.exists(dir_path):
+        os.mkdir(dir_path)
 
 def scene_to_image(viewer):
     # Define the size of the image (same as the scene's bounding rect)
@@ -153,6 +161,11 @@ class PaintLCM(QMainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.captureScreen)
 
+        # prepare sequence recording
+        self.is_recording = False
+        self.record_folder = ''
+        self.n_frame = 0
+
         if is_dark_theme:
             suf = '_white_tint'
             suf2 = '_white'
@@ -194,7 +207,36 @@ class PaintLCM(QMainWindow):
         print(f'result saved: {file_path}')
 
     def record_sequence(self):
-        pass
+        if self.sequence_action.isChecked():
+            # change flag
+            self.is_recording = True
+
+            # let the user choose an output folder
+            out_dir = str(QFileDialog.getExistingDirectory(self, "Select output_folder"))
+            while not os.path.isdir(out_dir):
+                QMessageBox.warning(self, "Warning",
+                                              "Oops! Not a folder!")
+                out_dir = str(QFileDialog.getExistingDirectory(self, "Select output_folder"))
+
+            self.record_folder = out_dir
+            self.inf_folder = os.path.join(self.record_folder, 'inference')
+            self.input_folder = os.path.join(self.record_folder, 'inputs')
+            # create the new subfolders to save frames
+            new_dir(self.inf_folder)
+            new_dir(self.input_folder)
+
+        else:
+            # change flag
+            self.is_recording = False
+            self.compile_video()
+            self.n_frame = 0
+
+
+    def compile_video(self):
+        path_inference = os.path.join(self.inf_folder, 'inference_video.mp4')
+        path_input = os.path.join(self.input_folder, 'input_video.mp4')
+        create_video(self.inf_folder, path_inference, 10)
+        create_video(self.input_folder, path_input, 10)
 
     def update_img_dim(self):
         # open dialog for image size
@@ -296,12 +338,19 @@ class PaintLCM(QMainWindow):
             strength=image_strength,
             seed=1337
         )
-        print(self.out)
 
         self.out.save('result.jpg')
         print('result saved')
 
         self.result_canvas.setPhoto(pixmap=QPixmap('result.jpg'))
+
+        # save images if recording flag
+        if self.is_recording:
+            self.n_frame += 1
+            frame_path = f"frame_{self.n_frame:04}.png"
+            self.out.save(os.path.join(self.inf_folder, frame_path))
+            self.im.save(os.path.join(self.input_folder, frame_path))
+
 
 
 def main(argv=None):
