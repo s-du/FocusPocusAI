@@ -3,9 +3,7 @@ Image generation from screen capture and/or simple brush strokes. It uses Stable
 The Gradio code from <a>https://github.com/flowtyone/flowty-realtime-lcm-canvas</a> was adapted to Pyside6, and upgraded with the screen capture functionality.
 
 
-
-https://github.com/s-du/FocusPocusAI/assets/53427781/897b5fe8-4a97-4e4e-92e1-56ef4ddc470b
-
+https://github.com/s-du/FocusPocusAI/assets/53427781/0c641573-599f-4bdb-b210-20576d7482a6
 
 
 Any app can be used as a design inspiration source!
