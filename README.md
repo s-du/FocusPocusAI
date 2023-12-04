@@ -2,6 +2,12 @@
 Image generation from screen capture and/or simple brush strokes. It uses Stable Diffusion and LCM-LoRA as AI backbone for the generative process.
 The Gradio code from <a>https://github.com/flowtyone/flowty-realtime-lcm-canvas</a> was adapted to Pyside6, and upgraded with the screen capture functionality.
 
+
+
+https://github.com/s-du/FocusPocusAI/assets/53427781/897b5fe8-4a97-4e4e-92e1-56ef4ddc470b
+
+
+
 Any app can be used as a design inspiration source!
 
 Examples of captures that could be a great source of information for diffusion :
