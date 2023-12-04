@@ -37,6 +37,7 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 ```
  (see https://pytorch.org/get-started/locally/)
 - Install other dependencies (see requirements):
+    - opencv-python
     - accelerate
     - diffusers
     - transformers
