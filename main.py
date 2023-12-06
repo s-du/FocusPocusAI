@@ -13,6 +13,7 @@ import os
 IMG_W = 512
 IMG_H = 512
 
+
 def new_dir(dir_path):
     """
     Simple function to verify if a directory exists and if not creating it
@@ -21,6 +22,7 @@ def new_dir(dir_path):
     """
     if not os.path.exists(dir_path):
         os.mkdir(dir_path)
+
 
 def scene_to_image(viewer):
     # Define the size of the image (same as the scene's bounding rect)
@@ -37,6 +39,7 @@ def scene_to_image(viewer):
     # Convert the BytesIO object to a PIL Image
     pil_img = Image.open(file_path)
     return pil_img
+
 
 class InputDialog(QDialog):
     def __init__(self):
@@ -119,6 +122,12 @@ class PaintLCM(QMainWindow):
         self.result_canvas = wid.simpleCanvas(self.img_dim)
         self.horizontalLayout_4.addWidget(self.result_canvas)
 
+        # loads models
+        self.models = model_list
+        self.models_ids = model_ids
+
+        self.comboBox.addItems(self.models)
+
         # initial parameters
         self.infer = load_models()
         self.im = None
@@ -143,6 +152,9 @@ class PaintLCM(QMainWindow):
 
         # when editing canvas --> update inference
         self.canvas.endDrawing.connect(self.update_image)
+
+        # combobox
+        self.comboBox.currentIndexChanged.connect(self.change_inference_model)
 
         # Connect the sliders to the update_image function
         self.step_slider.valueChanged.connect(self.update_image)
@@ -215,7 +227,7 @@ class PaintLCM(QMainWindow):
             out_dir = str(QFileDialog.getExistingDirectory(self, "Select output_folder"))
             while not os.path.isdir(out_dir):
                 QMessageBox.warning(self, "Warning",
-                                              "Oops! Not a folder!")
+                                    "Oops! Not a folder!")
                 out_dir = str(QFileDialog.getExistingDirectory(self, "Select output_folder"))
 
             self.record_folder = out_dir
@@ -231,12 +243,18 @@ class PaintLCM(QMainWindow):
             self.compile_video()
             self.n_frame = 0
 
-
     def compile_video(self):
         path_inference = os.path.join(self.inf_folder, 'inference_video.mp4')
         path_input = os.path.join(self.input_folder, 'input_video.mp4')
         create_video(self.inf_folder, path_inference, 10)
         create_video(self.input_folder, path_input, 10)
+
+
+    def change_inference_model(self):
+        idx = self.comboBox.currentIndex()
+        model_id = self.models_ids[idx]
+        self.infer = load_models(model_id=model_id)
+        self.update_image()
 
     def update_img_dim(self):
         # open dialog for image size
@@ -249,8 +267,8 @@ class PaintLCM(QMainWindow):
         # compile parameters
         self.img_dim = (w, h)
 
-        self.result_canvas.create_new_scene(w,h)
-        self.canvas.create_new_scene(w,h)
+        self.result_canvas.create_new_scene(w, h)
+        self.canvas.create_new_scene(w, h)
 
         self.box = wid.TransparentBox(self.img_dim)
 
@@ -350,7 +368,6 @@ class PaintLCM(QMainWindow):
             frame_path = f"frame_{self.n_frame:04}.png"
             self.out.save(os.path.join(self.inf_folder, frame_path))
             self.im.save(os.path.join(self.input_folder, frame_path))
-
 
 
 def main(argv=None):
