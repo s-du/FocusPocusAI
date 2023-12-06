@@ -18,8 +18,8 @@ os.environ["HF_HUB_CACHE"] = cache_path
 os.environ["HF_HOME"] = cache_path
 is_mac = platform == "darwin"
 
-model_list = ['Dreamshaper7','Dreamshaper8','AbsoluteReality', 'RevAnimated']
-model_ids = ["Lykon/dreamshaper-7", "Lykon/dreamshaper-8","Lykon/absolute-reality-1.81", "danbrown/RevAnimated-v1-2-2"]
+model_list = ['Dreamshaper7','Dreamshaper8','AbsoluteReality', 'RevAnimated','Protogen']
+model_ids = ["Lykon/dreamshaper-7", "Lykon/dreamshaper-8","Lykon/absolute-reality-1.81", "danbrown/RevAnimated-v1-2-2", "darkstorm2150/Protogen_x5.8_Official_Release"]
 
 def create_video(image_folder, video_name, fps):
     images = [img for img in os.listdir(image_folder) if img.endswith(".jpg") or img.endswith(".png")]
