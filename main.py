@@ -1,6 +1,8 @@
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
+from PySide6.QtMultimedia import QCamera, QMediaDevices
+from PySide6.QtMultimediaWidgets import QVideoWidget
 
 import widgets as wid
 import resources as res
@@ -145,6 +147,7 @@ class PaintLCM(QMainWindow):
         self.export_action.triggered.connect(self.save_output)
         self.sequence_action.triggered.connect(self.record_sequence)
         self.capture_action.triggered.connect(self.toggle_capture)
+        self.webcam_action.triggered.connect(self.toggle_webcam_capture)
         self.size_action.triggered.connect(self.update_img_dim)
         self.pushButton.clicked.connect(self.update_image)
 
@@ -173,6 +176,13 @@ class PaintLCM(QMainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.captureScreen)
 
+        # configure webcam capture
+        self.camera_index = 0  # Assuming you are using the first camera
+        self.capture_interval = 1000  # Set capture interval in milliseconds
+        self.timer2 = QTimer()
+        self.timer2.timeout.connect(self.capture_webcam_image)
+        self.opencv_capture = cv2.VideoCapture(self.camera_index)
+
         # prepare sequence recording
         self.is_recording = False
         self.record_folder = ''
@@ -192,6 +202,7 @@ class PaintLCM(QMainWindow):
         self.add_icon(res.find(f'img/crop{suf}.png'), self.capture_action)
         self.add_icon(res.find(f'img/save_as{suf}.png'), self.export_action)
         self.add_icon(res.find(f'img/movie{suf}.png'), self.sequence_action)
+        self.add_icon(res.find(f'img/camera{suf}.png'), self.webcam_action)
 
         # run first inference
         self.update_image()
@@ -282,6 +293,52 @@ class PaintLCM(QMainWindow):
         # Adjust the size of the window
         self.adjustSize()
 
+    def toggle_webcam_capture(self):
+        if self.webcam_action.isChecked():
+            # disable tools
+            self.brush_action.setEnabled(False)
+            self.eraser_action.setEnabled(False)
+            self.ellipse_action.setEnabled(False)
+            self.rectangle_action.setEnabled(False)
+            self.color_action.setEnabled(False)
+            self.capture_action.setEnabled(False)
+
+            # remove existing items
+            self.canvas.clear_drawing()
+
+            # launch capture
+            self.timer2.start(self.capture_interval)
+
+        else:
+            self.brush_action.setEnabled(True)
+            self.eraser_action.setEnabled(True)
+            self.ellipse_action.setEnabled(True)
+            self.rectangle_action.setEnabled(True)
+            self.color_action.setEnabled(True)
+            self.capture_action.setEnabled(True)
+
+            self.timer2.stop()
+            # stop capture
+
+    def capture_webcam_image(self):
+        ret, frame = self.opencv_capture.read()
+        if ret:
+            # Convert the captured frame to QImage then to QPixmap
+            height, width, channels = frame.shape
+            bytes_per_line = channels * width
+            qimage = QImage(frame.data, width, height, bytes_per_line, QImage.Format_BGR888)
+            pixmap = QPixmap.fromImage(qimage)
+            self.canvas.clear_drawing()
+            self.canvas.setPhoto(pixmap)
+        else:
+            print("Failed to capture image")
+
+    # Other methods...
+
+    def closeEvent(self, event):
+        # Make sure to release the camera when closing the application
+        self.opencv_capture.release()
+        super().closeEvent(event)
     def toggle_capture(self):
         if self.capture_action.isChecked():
             # disable tools
@@ -290,6 +347,7 @@ class PaintLCM(QMainWindow):
             self.ellipse_action.setEnabled(False)
             self.rectangle_action.setEnabled(False)
             self.color_action.setEnabled(False)
+            self.webcam_action.setEnabled(False)
 
             # remove existing items
             self.canvas.clear_drawing()
@@ -304,6 +362,7 @@ class PaintLCM(QMainWindow):
             self.ellipse_action.setEnabled(True)
             self.rectangle_action.setEnabled(True)
             self.color_action.setEnabled(True)
+            self.webcam_action.setEnabled(True)
 
             self.timer.stop()
             # stop capture

@@ -94,6 +94,7 @@
    <addaction name="color_action"/>
    <addaction name="separator"/>
    <addaction name="capture_action"/>
+   <addaction name="webcam_action"/>
    <addaction name="separator"/>
    <addaction name="export_action"/>
    <addaction name="sequence_action"/>
@@ -362,6 +363,14 @@
    </property>
    <property name="text">
     <string>Start recording</string>
+   </property>
+  </action>
+  <action name="webcam_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Webcam</string>
    </property>
   </action>
  </widget>
