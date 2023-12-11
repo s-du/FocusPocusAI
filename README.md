@@ -52,7 +52,13 @@ Voilà!
 
 https://github.com/s-du/FocusPocusAI/assets/53427781/0c641573-599f-4bdb-b210-20576d7482a6
 
-
+# Included models
+The user can choose the inference model from within the UI (beware of hard drive space!). Here are the available built-in models:
+- https://huggingface.co/darkstorm2150/Protogen_x5.8_Official_Release
+- https://huggingface.co/Lykon/dreamshaper-7
+- https://huggingface.co/Lykon/dreamshaper-8
+- https://huggingface.co/danbrown/RevAnimated-v1-2-2
+- ...
 
 ## Credits
 The 'lcm.py' is adapted from https://github.com/flowtyone
