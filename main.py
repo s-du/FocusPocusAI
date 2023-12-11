@@ -179,8 +179,8 @@ class PaintLCM(QMainWindow):
         # configure webcam capture
         self.camera_index = 0  # Assuming you are using the first camera
         self.capture_interval = 1000  # Set capture interval in milliseconds
-        self.timer2 = QTimer()
-        self.timer2.timeout.connect(self.capture_webcam_image)
+        self.timer_webcam = QTimer()
+        self.timer_webcam.timeout.connect(self.capture_webcam_image)
         self.opencv_capture = cv2.VideoCapture(self.camera_index)
 
         # prepare sequence recording
@@ -229,6 +229,17 @@ class PaintLCM(QMainWindow):
 
         print(f'result saved: {file_path}')
 
+    def toggle_canvas(self):
+        # Hide or show canvas based on checkbox state
+        if self.checkBox_hide.isChecked():
+            self.canvas.hide()
+        else:
+            self.canvas.show()
+
+        # Adjust the size of the window
+        self.adjustSize()
+
+    # Sequence record functionality __________________________________________
     def record_sequence(self):
         if self.sequence_action.isChecked():
             # change flag
@@ -260,7 +271,7 @@ class PaintLCM(QMainWindow):
         create_video(self.inf_folder, path_inference, 10)
         create_video(self.input_folder, path_input, 10)
 
-
+    # Inference parameters __________________________________________
     def change_inference_model(self):
         idx = self.comboBox.currentIndex()
         model_id = self.models_ids[idx]
@@ -283,15 +294,7 @@ class PaintLCM(QMainWindow):
 
         self.box = wid.TransparentBox(self.img_dim)
 
-    def toggle_canvas(self):
-        # Hide or show canvas based on checkbox state
-        if self.checkBox_hide.isChecked():
-            self.canvas.hide()
-        else:
-            self.canvas.show()
-
-        # Adjust the size of the window
-        self.adjustSize()
+    # Webcam capture __________________________________________
 
     def toggle_webcam_capture(self):
         if self.webcam_action.isChecked():
@@ -307,7 +310,7 @@ class PaintLCM(QMainWindow):
             self.canvas.clear_drawing()
 
             # launch capture
-            self.timer2.start(self.capture_interval)
+            self.timer_webcam.start(self.capture_interval)
 
         else:
             self.brush_action.setEnabled(True)
@@ -317,7 +320,7 @@ class PaintLCM(QMainWindow):
             self.color_action.setEnabled(True)
             self.capture_action.setEnabled(True)
 
-            self.timer2.stop()
+            self.timer_webcam.stop()
             # stop capture
 
     def capture_webcam_image(self):
@@ -330,6 +333,9 @@ class PaintLCM(QMainWindow):
             pixmap = QPixmap.fromImage(qimage)
             self.canvas.clear_drawing()
             self.canvas.setPhoto(pixmap)
+
+            if self.checkBox.isChecked():
+                self.update_image()
         else:
             print("Failed to capture image")
 
@@ -339,6 +345,8 @@ class PaintLCM(QMainWindow):
         # Make sure to release the camera when closing the application
         self.opencv_capture.release()
         super().closeEvent(event)
+
+    # Screen capture __________________________________________
     def toggle_capture(self):
         if self.capture_action.isChecked():
             # disable tools
