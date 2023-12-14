@@ -161,7 +161,7 @@
           <number>8</number>
          </property>
          <property name="value">
-          <number>8</number>
+          <number>7</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -201,7 +201,7 @@
           <number>30</number>
          </property>
          <property name="value">
-          <number>23</number>
+          <number>13</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -241,7 +241,10 @@
           <number>100</number>
          </property>
          <property name="value">
-          <number>55</number>
+          <number>47</number>
+         </property>
+         <property name="sliderPosition">
+          <number>47</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -261,6 +264,13 @@
       <widget class="QCheckBox" name="checkBox">
        <property name="text">
         <string>Live update</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_inverse">
+       <property name="text">
+        <string>Inverse webcam</string>
        </property>
       </widget>
      </item>

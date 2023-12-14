@@ -1,8 +1,6 @@
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
-from PySide6.QtMultimedia import QCamera, QMediaDevices
-from PySide6.QtMultimediaWidgets import QVideoWidget
 
 import widgets as wid
 import resources as res
@@ -166,7 +164,7 @@ class PaintLCM(QMainWindow):
 
         # Connect the text edit to the update_image function
         self.textEdit.setWordWrapMode(QTextOption.WordWrap)
-        self.textEdit.setText('An architectural drawing, sketch ink, realistic, detailed, dramatic')
+        self.textEdit.setText('An architectural drawing, building concept, realistic render, ultra detailed, cinematic, Frank Lloyd Whright, Bauhaus')
 
         # drawing ends
 
@@ -177,7 +175,7 @@ class PaintLCM(QMainWindow):
         self.timer.timeout.connect(self.captureScreen)
 
         # configure webcam capture
-        self.camera_index = 0  # Assuming you are using the first camera
+        self.camera_index = 1  # Assuming you are using the first camera
         self.capture_interval = 1000  # Set capture interval in milliseconds
         self.timer_webcam = QTimer()
         self.timer_webcam.timeout.connect(self.capture_webcam_image)
@@ -325,6 +323,10 @@ class PaintLCM(QMainWindow):
 
     def capture_webcam_image(self):
         ret, frame = self.opencv_capture.read()
+        # check if 'inverse' checkbox
+        if self.checkBox_inverse.isChecked():
+            frame = cv2.flip(frame, 0)
+            frame = cv2.flip(frame, 1)
         if ret:
             # Convert the captured frame to QImage then to QPixmap
             height, width, channels = frame.shape
