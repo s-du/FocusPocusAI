@@ -83,7 +83,7 @@
     <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="brush_action"/>
    <addaction name="eraser_action"/>
@@ -129,6 +129,16 @@
      </item>
      <item>
       <widget class="QTextEdit" name="textEdit"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Negative prompt</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTextEdit" name="textEdit_negative"/>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_5">

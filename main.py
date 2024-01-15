@@ -152,7 +152,7 @@ class PaintLCM(QMainWindow):
         self.checkBox_hide.stateChanged.connect(self.toggle_canvas)
 
         # when editing canvas --> update inference
-        self.canvas.endDrawing.connect(self.update_image)
+        self.canvas.endDrawing.connect(self.update_brush_stroke)
 
         # combobox
         self.comboBox.currentIndexChanged.connect(self.change_inference_model)
@@ -164,7 +164,9 @@ class PaintLCM(QMainWindow):
 
         # Connect the text edit to the update_image function
         self.textEdit.setWordWrapMode(QTextOption.WordWrap)
-        self.textEdit.setText('An architectural drawing, building concept, realistic render, ultra detailed, cinematic, Frank Lloyd Whright, Bauhaus')
+        self.textEdit.setText('An architectural drawing of a building concept, realistic ink and watercolor masterwork, ultra detailed, cinematic, Frank Lloyd Whright')
+
+        self.textEdit_negative.setWordWrapMode(QTextOption.WordWrap)
 
         # drawing ends
 
@@ -175,7 +177,7 @@ class PaintLCM(QMainWindow):
         self.timer.timeout.connect(self.captureScreen)
 
         # configure webcam capture
-        self.camera_index = 1  # Assuming you are using the first camera
+        self.camera_index = 0  # Assuming you are using the first camera
         self.capture_interval = 1000  # Set capture interval in milliseconds
         self.timer_webcam = QTimer()
         self.timer_webcam.timeout.connect(self.capture_webcam_image)
@@ -398,14 +400,19 @@ class PaintLCM(QMainWindow):
         self.box.close()
         event.accept()
 
+    def update_brush_stroke(self):
+        if self.checkBox.isChecked():
+            self.update_image()
+
     def update_image(self):
         # gather slider parameters:
         steps = self.step_slider.value()
         cfg = self.cfg_slider.value() / 10
         image_strength = self.strength_slider.value() / 100
 
-        # get prompt
+        # get prompts
         p = self.textEdit.toPlainText()
+        np = self.textEdit_negative.toPlainText()
 
         print(
             f'here are the parameters \n steps: {steps}\n cfg: {cfg}\n image strength: {image_strength}\n prompt: {p}')
@@ -419,6 +426,7 @@ class PaintLCM(QMainWindow):
         print('running inference')
         self.out = self.infer(
             prompt=p,
+            negative_prompt=np,
             image=self.im,
             num_inference_steps=steps,
             guidance_scale=cfg,

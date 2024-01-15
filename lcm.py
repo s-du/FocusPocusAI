@@ -108,6 +108,7 @@ def load_models(model_id="Lykon/dreamshaper-7"):
 
     def infer(
             prompt,
+            negative_prompt,
             image,
             num_inference_steps=4,
             guidance_scale=1,
@@ -119,6 +120,7 @@ def load_models(model_id="Lykon/dreamshaper-7"):
                 with timer("inference"):
                     return pipe(
                         prompt=prompt,
+                        negative_prompt=negative_prompt,
                         image=load_image(image),
                         generator=generator.manual_seed(seed),
                         num_inference_steps=num_inference_steps,
