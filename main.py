@@ -3,6 +3,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 
 import widgets as wid
+import sd_maker as sdxl
 import resources as res
 from lcm import *
 from PIL import Image
@@ -132,6 +133,28 @@ class PaintLCM(QMainWindow):
         self.infer = load_models()
         self.im = None
 
+        # pre-img parameters
+        styles = [
+            'Style 1 (Abstract painting)',
+            'Style 2 (Blender shapes)',
+            'Style 3 (Modern architecture art)',
+            'Style 4 (Sketch)',
+            'Style 5 (Graphite drawing)',
+            'Style 6 (Color shapes)',
+            'Style 7 (Bauhaus paint)'
+        ]
+        self.style_prompts = [
+            'watercolor painting of an abstract architectural design. The composition consists of various geometric shapes that resemble an assemblage of building elements, such as walls and roofs, with a mixture of straight and diagonal lines creating a three-dimensional effect. The color palette includes muted tones of blue, gray, yellow, and red, with the colors neatly contained within the outlined shapes. There is also a series of vertical lines in the upper right corner that could represent a stylized depiction of either a structural element or a decorative motif. The artwork gives off a modernist feel, possibly inspired by Cubism or Constructivism due to the emphasis on geometric forms and the exploration of space.',
+            'Abstract 3D geometric shapes randomly stacked on top of each other forming a very initial architectural concept, transparency effects, Blender',
+            'Imagine a piece of abstract art that captures the essence of an architectural form. The image should be composed of scribbles, creating a sense of a fluid and dynamic structure. Lines vary in thickness, suggesting depth and texture, while avoiding clear definitions of windows, doors, or any standard architectural elements',
+            'hand-drawn architectural sketch of a modern abstract building. The drawing is done in a scribble style using blue ink, with energetic lines creating the impression of a dynamic and somewhat fragmented structure. The sketch is characterized by its extremely loose and expressive linework, with an array of lines varying in thickness that vaguely suggest the form and texture of the building.',
+            'a very abstract image of what looks like a building. The drawing should look like it’s done with a mix of graphite and colored pencils. The dominant colors should be shades of gray and blue, with bold colorful accents on some parts of the facade to create a contrast. The strokes should be visible and have a rough, sketch-like wobbly quality, with some areas left incomplete or lightly shaded to convey an artistic and conceptual design feel.',
+            'The image features a geometric abstraction with a strong emphasis on form and color. The composition consists of 4 of 5 geometric shapes, including rectangles, circles, trapezoids and random polygons, that overlap on a light background. The color palette is limited and consists of colorful tones. The shapes create abstract architectural forms, with a balance between flatness and the illusion of three-dimensional space. The overall effect is modern, clean, and somewhat minimalistic. There is also a textural element that suggests the image may be a painting or a textile, giving it a tactile quality. The image is assymetrical',
+            'The image style is a form of geometric abstraction with an emphasis on bold color contrasts and simple geometric forms. The composition is made up of rectangular and triangular shapes that create a sense of dimensionality through their arrangement and the use of perspective. The color scheme is composed of a warm golden hue, deep purples, a rich blue, and black, creating a stark contrast that draws the eye to the interplay between the shapes. The texture appears canvas-like, suggesting that the medium could be acrylic or oil paint, which adds to the visual interest. The aesthetic is reminiscent of early 20th-century art movements that favored abstraction and pure color, such as De Stijl or Bauhaus, and carries a sense of modernist design with its clean lines and flat planes of color.'
+            ]
+        self.comboBox_style.addItems(styles)
+        self.style = 0
+
         # specific variables
         if not path.exists(cache_path):
             os.makedirs(cache_path, exist_ok=True)
@@ -148,6 +171,7 @@ class PaintLCM(QMainWindow):
         self.webcam_action.triggered.connect(self.toggle_webcam_capture)
         self.size_action.triggered.connect(self.update_img_dim)
         self.pushButton.clicked.connect(self.update_image)
+        self.pushButton_preimg.clicked.connect(self.generate_preimage)
 
         self.checkBox_hide.stateChanged.connect(self.toggle_canvas)
 
@@ -156,6 +180,7 @@ class PaintLCM(QMainWindow):
 
         # combobox
         self.comboBox.currentIndexChanged.connect(self.change_inference_model)
+        self.comboBox_style.currentIndexChanged.connect(self.change_preimg_style)
 
         # Connect the sliders to the update_image function
         self.step_slider.valueChanged.connect(self.update_image)
@@ -164,7 +189,7 @@ class PaintLCM(QMainWindow):
 
         # Connect the text edit to the update_image function
         self.textEdit.setWordWrapMode(QTextOption.WordWrap)
-        self.textEdit.setText('An architectural drawing of a building concept, realistic ink and watercolor masterwork, ultra detailed, cinematic, Frank Lloyd Whright')
+        self.textEdit.setText('An architectural render of a building, filled with many small details, realistic TwinMotion masterwork, 8k ultra detailed, award winning, dramatic, Frank Lloyd Wright')
 
         self.textEdit_negative.setWordWrapMode(QTextOption.WordWrap)
 
@@ -404,6 +429,16 @@ class PaintLCM(QMainWindow):
         if self.checkBox.isChecked():
             self.update_image()
 
+    def change_preimg_style(self):
+        i = self.comboBox_style.currentIndex()
+
+        self.style = i
+    def generate_preimage(self):
+        p = self.style_prompts[self.style]
+        im = sdxl.make_img(p)
+        im.save('preimg.jpg')
+
+        self.canvas.setPhoto(QPixmap('preimg.jpg'))
     def update_image(self):
         # gather slider parameters:
         steps = self.step_slider.value()
