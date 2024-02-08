@@ -1,6 +1,6 @@
 # FocusPocusAI
-Image generation from screen capture, webcam capture and/or simple brush strokes. It uses Stable Diffusion and LCM-LoRA as AI backbone for the generative process.
-The Gradio code from <a>https://github.com/flowtyone/flowty-realtime-lcm-canvas</a> was adapted to Pyside6, and upgraded with the screen capture functionality.
+Image generation from screen capture, webcam capture and/or simple brush strokes. The functions have been designed primarily for use in architecture, and for sketching in the early stages of a project. It uses Stable Diffusion and LCM-LoRA as AI backbone for the generative process.
+Initially, the Gradio code from <a>https://github.com/flowtyone/flowty-realtime-lcm-canvas</a> was adapted to Pyside6, and upgraded with the screen capture functionality.
 
 ![example_focus](https://github.com/s-du/FocusPocusAI/assets/53427781/b23c1329-76ba-4e50-8741-f3b245dca41c)
 
@@ -47,7 +47,7 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 
 ## Usage
 Screen capture a 512 x 512 window on top any app (the dimensions can be adapted depending on your GPU). By default, the capture timestep is 1 second. Then, paint with a brush or add simple shapes and see the proposed image adapting live.
-CTRL + wheel to adapt cursor size. The SD model can be adapted in the lcm.py file.
+CTRL + wheel to adapt cursor size. The SD model can be adapted in the lcm.py file or chosen in a drop-down menu.
 Voilà!
 
 https://github.com/s-du/FocusPocusAI/assets/53427781/0c641573-599f-4bdb-b210-20576d7482a6
