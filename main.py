@@ -219,8 +219,8 @@ class PaintLCM(QMainWindow):
         self.comboBox_style.addItems(styles)
         self.style = 0
 
-        ip_styles = ['watercolor', 'collage 1', 'vray', 'charcoal', 'ligne claire', 'blue pencil', 'organic colors', 'custom']
-        self.ip_img_paths = [res.find('img/ref1.png'), res.find('img/ref2.png'), res.find('img/ref3.png'), res.find('img/ref4.png'), res.find('img/ref5.png'), res.find('img/ref6.png'), res.find('img/ref7.png')]
+        ip_styles = ['watercolor', 'collage 1', 'vray', 'charcoal', 'ligne claire', 'blue pencil', 'organic colors', 'fragmented', 'custom']
+        self.ip_img_paths = [res.find('img/ref1.png'), res.find('img/ref2.png'), res.find('img/ref3.png'), res.find('img/ref4.png'), res.find('img/ref5.png'), res.find('img/ref6.png'), res.find('img/ref7.png'), res.find('img/ref8.png')]
         self.ip_custom_path = self.ip_img_paths[0]
         self.ip_ref_img = self.ip_img_paths[0]
         self.comboBox_ip_styles.addItems(ip_styles)
