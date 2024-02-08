@@ -8,7 +8,9 @@ import resources as res
 from lcm import *
 from PIL import Image
 
+import torch
 import os
+import gc
 
 # Params
 IMG_W = 512
@@ -132,6 +134,7 @@ class PaintLCM(QMainWindow):
         # initial parameters
         self.infer = load_models()
         self.im = None
+        self.original_parent = None
 
         # pre-img parameters
         styles = [
@@ -216,6 +219,12 @@ class PaintLCM(QMainWindow):
         self.comboBox_style.addItems(styles)
         self.style = 0
 
+        ip_styles = ['watercolor', 'collage 1', 'vray', 'charcoal', 'ligne claire', 'blue pencil', 'organic colors', 'custom']
+        self.ip_img_paths = [res.find('img/ref1.png'), res.find('img/ref2.png'), res.find('img/ref3.png'), res.find('img/ref4.png'), res.find('img/ref5.png'), res.find('img/ref6.png'), res.find('img/ref7.png')]
+        self.ip_custom_path = self.ip_img_paths[0]
+        self.ip_ref_img = self.ip_img_paths[0]
+        self.comboBox_ip_styles.addItems(ip_styles)
+
         # specific variables
         if not path.exists(cache_path):
             os.makedirs(cache_path, exist_ok=True)
@@ -231,10 +240,13 @@ class PaintLCM(QMainWindow):
         self.capture_action.triggered.connect(self.toggle_capture)
         self.webcam_action.triggered.connect(self.toggle_webcam_capture)
         self.size_action.triggered.connect(self.update_img_dim)
+        self.actionFull_screen_output.triggered.connect(self.toggle_fullscreen)
+        self.actionLoad_IP_Adapter_reference_image.triggered.connect(self.define_ip_ref)
         self.pushButton.clicked.connect(self.update_image)
         self.pushButton_preimg.clicked.connect(self.generate_preimage)
 
         self.checkBox_hide.stateChanged.connect(self.toggle_canvas)
+        self.checkBox_ip.stateChanged.connect(self.toggle_ip)
 
         # when editing canvas --> update inference
         self.canvas.endDrawing.connect(self.update_brush_stroke)
@@ -242,6 +254,7 @@ class PaintLCM(QMainWindow):
         # combobox
         self.comboBox.currentIndexChanged.connect(self.change_inference_model)
         self.comboBox_style.currentIndexChanged.connect(self.change_preimg_style)
+        self.comboBox_ip_styles.currentIndexChanged.connect(self.change_ip_style)
 
         # Connect the sliders to the update_image function
         self.step_slider.valueChanged.connect(self.update_image)
@@ -250,7 +263,7 @@ class PaintLCM(QMainWindow):
 
         # Connect the text edit to the update_image function
         self.textEdit.setWordWrapMode(QTextOption.WordWrap)
-        self.textEdit.setText('An architectural render of a building, filled with many small details, realistic TwinMotion masterwork, 8k ultra detailed, award winning, dramatic, Frank Lloyd Wright')
+        self.textEdit.setText('An architectural render of a building')
 
         self.textEdit_negative.setWordWrapMode(QTextOption.WordWrap)
 
@@ -294,6 +307,27 @@ class PaintLCM(QMainWindow):
         self.update_image()
 
     # general functions __________________________________________
+    def toggle_fullscreen(self):
+        if self.result_canvas.isFullScreen():
+            self.handleExitFullScreen()
+        else:
+            self.original_parent = self.result_canvas.parent()  # Save the original parent
+            self.result_canvas.setParent(None)  # Detach from the main window
+            self.result_canvas.setWindowFlags(Qt.Window)
+            self.result_canvas.showFullScreen()  # Enter fullscreen mode
+
+    def handleExitFullScreen(self):
+        self.result_canvas.setWindowFlags(Qt.Widget)
+        self.result_canvas.setParent(self.groupBox)
+        self.horizontalLayout_4.addWidget(self.result_canvas)  # Re-add to the specific layout
+        self.result_canvas.showNormal()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape and self.result_canvas.isFullScreen():
+            self.toggle_fullscreen()
+        else:
+            super().keyPressEvent(event)
+
     def add_icon(self, img_source, pushButton_object):
         """
         Function to add an icon to a pushButton
@@ -358,10 +392,50 @@ class PaintLCM(QMainWindow):
         create_video(self.input_folder, path_input, 10)
 
     # Inference parameters __________________________________________
+    def define_ip_ref(self):
+        try:
+            img = QFileDialog.getOpenFileName(self, u"Ouverture de fichiers", "",
+                                                        "Image Files (*.png *.jpeg *.jpg *.bmp *.tif)")
+            print(f'the following image will be loaded {img[0]}')
+        except:
+            pass
+        if img[0] != '':
+            # load and show new image
+            self.ip_ref_img = img[0]
+            self.ip_custom_path = img[0]
+
+        self.change_inference_model()
+        self.comboBox_ip_styles.setCurrentIndex(len(self.ip_img_paths)) # put combobox to 'custom'
+
+    def change_ip_style(self):
+        idx = self.comboBox_ip_styles.currentIndex()
+        if idx != len(self.ip_img_paths): # if not custom
+            self.ip_ref_img = self.ip_img_paths[idx]
+        else:
+            self.ip_ref_img = self.ip_custom_path
+
+        self.change_inference_model()
+    def toggle_ip(self):
+        if self.checkBox_ip.isChecked():
+            self.comboBox_ip_styles.setEnabled(True)
+        else:
+            self.comboBox_ip_styles.setEnabled(False)
+
+        self.change_inference_model()
+
     def change_inference_model(self):
+        use_ip = self.checkBox_ip.isChecked()
         idx = self.comboBox.currentIndex()
         model_id = self.models_ids[idx]
-        self.infer = load_models(model_id=model_id)
+
+        # Attempt to free up memory by explicitly deleting the previous model and calling garbage collector
+        if hasattr(self, 'infer'):
+            del self.infer
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
+        self.infer = load_models(model_id=model_id, use_ip=use_ip, ip_ref_img=self.ip_ref_img)
         self.update_image()
 
     def update_img_dim(self):
@@ -515,7 +589,7 @@ class PaintLCM(QMainWindow):
 
         print('capturing drawing')
         self.im = scene_to_image(self.canvas)
-        print(self.im)
+        self.im.save('input.png')
 
         # capture painted image
 
@@ -523,7 +597,7 @@ class PaintLCM(QMainWindow):
         self.out = self.infer(
             prompt=p,
             negative_prompt=np,
-            image=self.im,
+            image='input.png',
             num_inference_steps=steps,
             guidance_scale=cfg,
             strength=image_strength,

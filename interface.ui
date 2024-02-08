@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1049</width>
-    <height>769</height>
+    <width>1090</width>
+    <height>819</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1049</width>
+     <width>1090</width>
      <height>26</height>
     </rect>
    </property>
@@ -67,9 +67,17 @@
      <string>Options</string>
     </property>
     <addaction name="size_action"/>
+    <addaction name="actionLoad_IP_Adapter_reference_image"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionFull_screen_output"/>
    </widget>
    <addaction name="menuExport"/>
    <addaction name="menuOptions"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -101,7 +109,7 @@
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="floating">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
@@ -141,6 +149,26 @@
       <widget class="QTextEdit" name="textEdit_negative"/>
      </item>
      <item>
+      <widget class="QCheckBox" name="checkBox_ip">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Use IP Adapter</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_ip_styles">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
@@ -168,7 +196,7 @@
           <number>4</number>
          </property>
          <property name="maximum">
-          <number>8</number>
+          <number>15</number>
          </property>
          <property name="value">
           <number>7</number>
@@ -426,6 +454,16 @@
    </property>
    <property name="text">
     <string>Webcam</string>
+   </property>
+  </action>
+  <action name="actionFull_screen_output">
+   <property name="text">
+    <string>Full screen output</string>
+   </property>
+  </action>
+  <action name="actionLoad_IP_Adapter_reference_image">
+   <property name="text">
+    <string>Load custom IP Adapter image</string>
    </property>
   </action>
  </widget>

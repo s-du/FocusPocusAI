@@ -1,6 +1,8 @@
-diffusers
+diffusers~=0.26.2
 transformers
 accelerate
-torch~=2.1.1+cu118
+torch~=2.2.0+cu118
 PySide6~=6.5.2
 Pillow~=9.3.0
+opencv-python~=4.8.1.78
+requests~=2.28.1

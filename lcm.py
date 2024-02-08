@@ -69,7 +69,7 @@ class timer:
         print(f"{self.method} took {str(round(end - self.start, 2))}s")
 
 
-def load_models(model_id="Lykon/dreamshaper-7"):
+def load_models(model_id="Lykon/dreamshaper-7", use_ip=True, ip_ref_img='ip_ref.png'):
     from diffusers import AutoPipelineForImage2Image, LCMScheduler
     from diffusers.utils import load_image
 
@@ -95,8 +95,12 @@ def load_models(model_id="Lykon/dreamshaper-7"):
             safety_checker=None
         )
 
-    pipe.scheduler = LCMScheduler.from_config(pipe.scheduler.config)
+    # if using adapter
+    if use_ip:
+        pipe.load_ip_adapter("h94/IP-Adapter", subfolder="models", weight_name="ip-adapter_sd15.bin")
+        ip_image = load_image(ip_ref_img)
 
+    pipe.scheduler = LCMScheduler.from_config(pipe.scheduler.config)
     pipe.load_lora_weights(lcm_lora_id)
     pipe.fuse_lora()
 
@@ -115,17 +119,30 @@ def load_models(model_id="Lykon/dreamshaper-7"):
             strength=0.9,
             seed=random.randrange(0, 2**63)
     ):
+        print(image)
         with torch.inference_mode():
             with torch.autocast("cuda") if device == "cuda" else nullcontext():
                 with timer("inference"):
-                    return pipe(
-                        prompt=prompt,
-                        negative_prompt=negative_prompt,
-                        image=load_image(image),
-                        generator=generator.manual_seed(seed),
-                        num_inference_steps=num_inference_steps,
-                        guidance_scale=guidance_scale,
-                        strength=strength
-                    ).images[0]
+                    if use_ip:
+                        return pipe(
+                            prompt=prompt,
+                            negative_prompt=negative_prompt,
+                            image=load_image(image),
+                            ip_adapter_image=ip_image,
+                            generator=generator.manual_seed(seed),
+                            num_inference_steps=num_inference_steps,
+                            guidance_scale=guidance_scale,
+                            strength=strength
+                        ).images[0]
+                    else:
+                        return pipe(
+                            prompt=prompt,
+                            negative_prompt=negative_prompt,
+                            image=load_image(image),
+                            generator=generator.manual_seed(seed),
+                            num_inference_steps=num_inference_steps,
+                            guidance_scale=guidance_scale,
+                            strength=strength
+                        ).images[0]
 
     return infer
