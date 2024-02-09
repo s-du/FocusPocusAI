@@ -580,6 +580,8 @@ class PaintLCM(QMainWindow):
         cfg = self.cfg_slider.value() / 10
         image_strength = self.strength_slider.value() / 100
 
+        ip_strength = self.strength_slider_ip.value() / 10
+
         # get prompts
         p = self.textEdit.toPlainText()
         np = self.textEdit_negative.toPlainText()
@@ -601,7 +603,8 @@ class PaintLCM(QMainWindow):
             num_inference_steps=steps,
             guidance_scale=cfg,
             strength=image_strength,
-            seed=1337
+            seed=1337,
+            ip_scale=ip_strength
         )
 
         self.out.save('result.jpg')

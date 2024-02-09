@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1090</width>
-    <height>819</height>
+    <width>1414</width>
+    <height>943</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1090</width>
+     <width>1414</width>
      <height>26</height>
     </rect>
    </property>
@@ -118,7 +118,7 @@
     <set>Qt::AllDockWidgetAreas</set>
    </property>
    <property name="windowTitle">
-    <string>Options</string>
+    <string>Output options</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -136,7 +136,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QTextEdit" name="textEdit"/>
+      <widget class="QTextEdit" name="textEdit">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>100</height>
+        </size>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_5">
@@ -146,25 +153,12 @@
       </widget>
      </item>
      <item>
-      <widget class="QTextEdit" name="textEdit_negative"/>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox_ip">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Use IP Adapter</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comboBox_ip_styles">
-       <property name="enabled">
-        <bool>false</bool>
+      <widget class="QTextEdit" name="textEdit_negative">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>100</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -188,7 +182,7 @@
         <widget class="QSlider" name="step_slider">
          <property name="maximumSize">
           <size>
-           <width>200</width>
+           <width>1677215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -203,6 +197,12 @@
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
+         <property name="tickInterval">
+          <number>1</number>
          </property>
         </widget>
        </item>
@@ -228,7 +228,7 @@
         <widget class="QSlider" name="cfg_slider">
          <property name="maximumSize">
           <size>
-           <width>200</width>
+           <width>1677215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -238,11 +238,20 @@
          <property name="maximum">
           <number>30</number>
          </property>
+         <property name="singleStep">
+          <number>2</number>
+         </property>
          <property name="value">
           <number>13</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
+         <property name="tickInterval">
+          <number>2</number>
          </property>
         </widget>
        </item>
@@ -268,7 +277,7 @@
         <widget class="QSlider" name="strength_slider">
          <property name="maximumSize">
           <size>
-           <width>200</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -277,6 +286,9 @@
          </property>
          <property name="maximum">
           <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>5</number>
          </property>
          <property name="value">
           <number>47</number>
@@ -287,30 +299,15 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
+         <property name="tickInterval">
+          <number>5</number>
+         </property>
         </widget>
        </item>
       </layout>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox_hide">
-       <property name="text">
-        <string>Hide input</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox">
-       <property name="text">
-        <string>Live update</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox_inverse">
-       <property name="text">
-        <string>Inverse webcam</string>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton">
@@ -321,7 +318,14 @@
         </size>
        </property>
        <property name="text">
-        <string>Update inference</string>
+        <string>Update output!</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox">
+       <property name="text">
+        <string>Live update</string>
        </property>
       </widget>
      </item>
@@ -343,16 +347,13 @@
   </widget>
   <widget class="QDockWidget" name="dockWidget_2">
    <property name="windowTitle">
-    <string>Pre-image</string>
+    <string>Input options</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
     <layout class="QVBoxLayout" name="verticalLayout_8">
-     <item>
-      <widget class="QComboBox" name="comboBox_style"/>
-     </item>
      <item>
       <widget class="QPushButton" name="pushButton_preimg">
        <property name="text">
@@ -361,7 +362,130 @@
       </widget>
      </item>
      <item>
+      <widget class="QComboBox" name="comboBox_style"/>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_hide">
+       <property name="text">
+        <string>Hide input</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_inverse">
+       <property name="text">
+        <string>Inverse webcam</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_3">
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="windowTitle">
+    <string>IP Adapter</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QVBoxLayout" name="verticalLayout_10">
+     <item>
+      <widget class="QCheckBox" name="checkBox_ip">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Use IP Adapter</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_ip_styles">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_9">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>IP strength</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QSlider" name="strength_slider_ip">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>10</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>10</number>
+         </property>
+         <property name="sliderPosition">
+          <number>10</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
+         <property name="tickInterval">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_4">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>

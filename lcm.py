@@ -117,13 +117,15 @@ def load_models(model_id="Lykon/dreamshaper-7", use_ip=True, ip_ref_img='ip_ref.
             num_inference_steps=4,
             guidance_scale=1,
             strength=0.9,
-            seed=random.randrange(0, 2**63)
+            seed=random.randrange(0, 2**63),
+            ip_scale=1
     ):
         print(image)
         with torch.inference_mode():
             with torch.autocast("cuda") if device == "cuda" else nullcontext():
                 with timer("inference"):
                     if use_ip:
+                        pipe.set_ip_adapter_scale(ip_scale)
                         return pipe(
                             prompt=prompt,
                             negative_prompt=negative_prompt,
