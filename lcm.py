@@ -6,6 +6,7 @@ import time
 from sys import platform
 import torch
 import cv2
+import resources as res
 
 """
 All credits to https://github.com/flowtyone/flowty-realtime-lcm-canvas!!
@@ -18,8 +19,8 @@ os.environ["HF_HUB_CACHE"] = cache_path
 os.environ["HF_HOME"] = cache_path
 is_mac = platform == "darwin"
 
-model_list = ['Dreamshaper7','Dreamshaper8','AbsoluteReality', 'RevAnimated','Protogen']
-model_ids = ["Lykon/dreamshaper-7", "Lykon/dreamshaper-8","Lykon/absolute-reality-1.81", "danbrown/RevAnimated-v1-2-2", "darkstorm2150/Protogen_x5.8_Official_Release"]
+model_list = ['Dreamshaper7', 'SD 1.5','Dreamshaper8','AbsoluteReality', 'RevAnimated','Protogen',  'SDXL 1.0']
+model_ids = [ "Lykon/dreamshaper-7", "runwayml/stable-diffusion-v1-5", "Lykon/dreamshaper-8","Lykon/absolute-reality-1.81", "danbrown/RevAnimated-v1-2-2", "darkstorm2150/Protogen_x5.8_Official_Release", "stabilityai/stable-diffusion-xl-base-1.0"]
 
 def create_video(image_folder, video_name, fps):
     images = [img for img in os.listdir(image_folder) if img.endswith(".jpg") or img.endswith(".png")]
@@ -69,7 +70,7 @@ class timer:
         print(f"{self.method} took {str(round(end - self.start, 2))}s")
 
 
-def load_models(model_id="Lykon/dreamshaper-7", use_ip=True, ip_ref_img='ip_ref.png'):
+def load_models(model_id="runwayml/stable-diffusion-v1-5", use_ip=True, ip_ref_img=res.find('img/ref1.png')):
     from diffusers import AutoPipelineForImage2Image, LCMScheduler
     from diffusers.utils import load_image
 
@@ -79,6 +80,11 @@ def load_models(model_id="Lykon/dreamshaper-7", use_ip=True, ip_ref_img='ip_ref.
     use_fp16 = should_use_fp16()
 
     lcm_lora_id = "latent-consistency/lcm-lora-sdv1-5"
+    ip_adapter_name = "ip-adapter_sd15.bin"
+    # if stable diffusion XL
+    if model_id == "stabilityai/stable-diffusion-xl-base-1.0":
+        lcm_lora_id = "latent-consistency/lcm-lora-sdxl"
+        ip_adapter_name = "ip-adapter-plus_sdxl_vit-h.safetensors"
 
     if use_fp16:
         pipe = AutoPipelineForImage2Image.from_pretrained(
@@ -97,7 +103,7 @@ def load_models(model_id="Lykon/dreamshaper-7", use_ip=True, ip_ref_img='ip_ref.
 
     # if using adapter
     if use_ip:
-        pipe.load_ip_adapter("h94/IP-Adapter", subfolder="models", weight_name="ip-adapter_sd15.bin")
+        pipe.load_ip_adapter("h94/IP-Adapter", subfolder="models", weight_name=ip_adapter_name)
         ip_image = load_image(ip_ref_img)
 
     pipe.scheduler = LCMScheduler.from_config(pipe.scheduler.config)

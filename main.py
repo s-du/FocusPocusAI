@@ -256,6 +256,9 @@ class PaintLCM(QMainWindow):
         self.comboBox_style.currentIndexChanged.connect(self.change_preimg_style)
         self.comboBox_ip_styles.currentIndexChanged.connect(self.change_ip_style)
 
+        # default model
+        self.model_id = "Lykon/dreamshaper-7"
+
         # Connect the sliders to the update_image function
         self.step_slider.valueChanged.connect(self.update_image)
         self.cfg_slider.valueChanged.connect(self.update_image)
@@ -399,6 +402,7 @@ class PaintLCM(QMainWindow):
             print(f'the following image will be loaded {img[0]}')
         except:
             pass
+
         if img[0] != '':
             # load and show new image
             self.ip_ref_img = img[0]
@@ -426,7 +430,7 @@ class PaintLCM(QMainWindow):
     def change_inference_model(self):
         use_ip = self.checkBox_ip.isChecked()
         idx = self.comboBox.currentIndex()
-        model_id = self.models_ids[idx]
+        self.model_id = self.models_ids[idx]
 
         # Attempt to free up memory by explicitly deleting the previous model and calling garbage collector
         if hasattr(self, 'infer'):
@@ -435,7 +439,7 @@ class PaintLCM(QMainWindow):
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
 
-        self.infer = load_models(model_id=model_id, use_ip=use_ip, ip_ref_img=self.ip_ref_img)
+        self.infer = load_models(model_id=self.model_id, use_ip=use_ip, ip_ref_img=self.ip_ref_img)
         self.update_image()
 
     def update_img_dim(self):
@@ -570,7 +574,7 @@ class PaintLCM(QMainWindow):
         self.style = i
     def generate_preimage(self):
         p = self.style_prompts[self.style]
-        im = sdxl.make_img(p)
+        im = sdxl.make_img(p, model_id=self.model_id)
         im.save('preimg.jpg')
 
         self.canvas.setPhoto(QPixmap('preimg.jpg'))
